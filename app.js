@@ -48,7 +48,8 @@ app.use(session({
         secure: false,
         httpOnly: true,
         expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
-      }
+      },
+    proxy: true,
   }));
 
 app.post('/add-to-cart', async (req, res) => {
