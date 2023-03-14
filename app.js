@@ -1,8 +1,8 @@
 const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3");
 const { DynamoDBClient, PutItemCommand, QueryCommand } = require("@aws-sdk/client-dynamodb");
 const express = require('express');
+const cookieSession = require('cookie-session');
 const bodyParser = require('body-parser');
-const session = require('express-session');
 const { v4: uuidv4 } = require('uuid');
 
 const port = process.env.PORT || 3000;
@@ -15,11 +15,13 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Initialize S3 and DynamoDB clients
+app.use(cookieSession({
+    name: 'session',
+    keys: ['key1', 'key2'],
+}));
+
 const s3 = new S3Client({ region: myregion });
 const dynamodb = new DynamoDBClient({ region: myregion });
-
-
 
 const products = [
     { 
@@ -38,19 +40,6 @@ const products = [
         id: "Product3.jpg"
     }
 ]
-
-app.use(session({
-    name: 'session',
-    secret: 'my-secret-key',
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-        secure: false,
-        httpOnly: true,
-        expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
-      },
-    proxy: true,
-  }));
 
 app.post('/add-to-cart', async (req, res) => {
     try {
@@ -81,6 +70,7 @@ app.post('/add-to-cart', async (req, res) => {
 });
 
 app.get('/', async (req, res) => {
+    req.session.id =  req.session.id || uuidv4()
     try {
         const result = await dynamodb.send(new QueryCommand({
             TableName: mytable,
