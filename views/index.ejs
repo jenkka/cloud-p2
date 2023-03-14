@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Carrito de Compras</title>
+</head>
+<body>
+  <h1>Productos</h1>
+  <ul>
+      <% products.forEach(product => { %>
+        <li>
+          <%= product.name %> - $<%= product.price %>
+          <br>
+          <img style="max-width: 300px; max-height: 300px;" src="<%= product.image %>">
+          <form method="post" action="/add-to-cart">
+            <input type="hidden" name="productId" value="<%= product.id %>">
+            <button type="submit">Agregar al carrito</button>
+          </form>
+        </li>
+        <br>
+      <% }); %>
+  </ul>
+  <h1>Carrito de Compras</h1>
+  <ul>
+    <% cart.forEach(product => { %>
+      <li><%= product.name %> - $<%= product.price %></li>
+    <% }); %>
+  </ul>
+</body>
+</html>
