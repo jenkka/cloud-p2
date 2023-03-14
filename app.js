@@ -40,9 +40,15 @@ const products = [
 ]
 
 app.use(session({
+    name: 'session',
     secret: 'my-secret-key',
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
+    cookie: {
+        secure: false,
+        httpOnly: true,
+        expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+      }
   }));
 
 app.post('/add-to-cart', async (req, res) => {
